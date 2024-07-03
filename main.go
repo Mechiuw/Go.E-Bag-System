@@ -31,6 +31,8 @@ func main() {
 		id := c.Param("id")
 
 		var bag models.Bag
+
+		//exception || error catch
 		if err := c.ShouldBindJSON(&bag); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),
@@ -38,6 +40,7 @@ func main() {
 			return
 		}
 
+		// success
 		for idx, element := range models.Inventory {
 			if element.Id == id {
 				element.Name = bag.Name
