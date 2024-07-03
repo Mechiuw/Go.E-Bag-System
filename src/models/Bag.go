@@ -1,10 +1,10 @@
 package models
 
-type Bag struct {
+type Item struct {
 	Id       string
 	Name     string
 	Quantity int
 	Type     string
 }
 
-var Inventory = []Bag{}
+var Bag = []Item{}
