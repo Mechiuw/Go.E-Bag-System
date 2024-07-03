@@ -10,21 +10,50 @@ import (
 
 func main() {
 	r := gin.Default()
-	r.GET("/books", func(c *gin.Context) {
-		c.JSON(http.StatusOK, models.Books)
+	r.GET("/bag", func(c *gin.Context) {
+		c.JSON(http.StatusOK, models.Inventory)
 	})
 
-	r.POST("/books", func(c *gin.Context) {
-		var book models.Book
+	r.POST("/bag", func(c *gin.Context) {
+		var bag models.Bag
 
-		if err := c.ShouldBindJSON(&book); err != nil {
+		if err := c.ShouldBindJSON(&bag); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),
 			})
 			return
 		}
-		models.Books = append(models.Books, book)
-		c.JSON(http.StatusCreated, book)
+		models.Inventory = append(models.Inventory, bag)
+		c.JSON(http.StatusCreated, bag)
+	})
+
+	r.PUT("/bag/:id", func(c *gin.Context) {
+		id := c.Param("id")
+
+		var bag models.Bag
+		if err := c.ShouldBindJSON(&bag); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		for idx, element := range models.Inventory {
+			if element.Id == id {
+				element.Name = bag.Name
+				element.Quantity = bag.Quantity
+
+				models.Inventory[idx] = element
+
+				c.JSON(http.StatusOK, element)
+				return
+			}
+		}
+
+		// If no matching id found in Inventory
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "Bag not found",
+		})
 	})
 
 	r.Run()
